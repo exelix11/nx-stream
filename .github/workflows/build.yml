@@ -1,0 +1,58 @@
+name: Build osu-stream-nx
+
+on:
+  workflow_dispatch: 
+    inputs:
+      sdk_bin:
+        description: "Mono-nx SDK binary url"
+        required: true
+        default: https://github.com/exelix11/mono-nx/releases/download/rel-2/mono-nx-sdk-linux-x64.zip
+      mononx_commit:
+        description: "Reference commit for mono-nx"
+        required: true
+        default: "66d5fd0"
+      devkit_container: 
+        description: "Docker image with switch tools"
+        required: true
+        default: "devkitpro/devkita64:20260219" # It is important that this matches the one we use to built the SDK binaries because we don't want to compile with different compiler versions
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ${{inputs.devkit_container}}
+    steps:
+    # SDK setup
+    - name: Clone mono-nx repo
+      working-directory: /tmp
+      run: git clone https://github.com/exelix11/mono-nx.git
+    - name: Checkout specific mono-nx commit
+      working-directory: /tmp/mono-nx
+      if: ${{ inputs.mononx_commit != 'latest' }}
+      run: git checkout ${{inputs.mononx_commit}}
+    - name: Download pre-built mono-nx SDK
+      working-directory: /tmp/mono-nx
+      run: |
+        wget -O sdk.zip ${{inputs.sdk_bin}}
+        unzip sdk.zip
+        rm sdk.zip
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+    
+    # Do the build
+    - uses: actions/checkout@v4
+    - name: Build
+      shell: bash
+      run: |
+        pushd /tmp/mono-nx
+        source env.sh
+        popd
+        cd mono-nx/fdk-aac && ./build.sh
+        cd ../aot && ./build_aot.sh
+        make -j4
+        ./collect_sd_release.sh
+    - name: Upload SD files
+      uses: actions/upload-artifact@v7.0.1
+      with:
+        name: build
+        path: mono-nx/aot/sd_card

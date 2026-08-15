@@ -1,0 +1,15 @@
+*.elf
+*.nacp
+*.nro
+build/
+output/
+*.log
+*.dll
+source/mono_symbols.h
+
+!romfs/osu-stream/build/
+
+sd_card/osu_stream/icudt77l.dat
+sd_card/osu_stream/Beatmaps/
+sd_card/osu_stream/Skins/
+sd_card/osu_stream/Localisation/

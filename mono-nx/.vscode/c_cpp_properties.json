@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "Switch",
+            "includePath": [
+                "/opt/devkitpro/libnx/include",
+                "/opt/devkitpro/devkitA64/aarch64-none-elf/include",
+                "/opt/devkitpro/portlibs/switch/include/SDL2/",
+                "${workspaceFolder}/shared/",
+                "${workspaceFolder}/shared/third_party",
+                "${env:MONO_NX_ROOT}/artifacts/obj/mono/libnx.arm64.Debug/out/include/mono-2.0",
+                "${env:MONO_NX_ROOT}/src/mono/",
+                "${env:ICU_NX_INSTALL_DIR}/include",
+                "${workspaceFolder}/fdk-aac/fdk-aac-2.0.3/build/include"
+            ],
+            "defines": [
+                "__SWITCH__=1",
+                "DLSHIM_OPENGL=1",
+                "DLSHIM_OPENAL=1",
+                "DLSHIM_OSU=1"
+            ],
+            "compilerPath": "/opt/devkitpro/devkitA64/bin/aarch64-none-elf-gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-arm64"
+        }
+    ],
+    "version": 4
+}
