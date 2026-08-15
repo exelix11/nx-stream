@@ -20,6 +20,10 @@ void *getsym_Libnx(const char *name)
     
     SYM_RESOLVE_EXISTING(appletMainLoop);
     SYM_RESOLVE_EXISTING(appletGetOperationMode);
+    SYM_RESOLVE_EXISTING(appletHook);
+    SYM_RESOLVE_EXISTING(appletUnhook);
+    SYM_RESOLVE_EXISTING(appletGetFocusState);
+    SYM_RESOLVE_EXISTING(appletSetFocusHandlingMode);
 
     SYM_RESOLVE_EXISTING(hidInitializeTouchScreen);
     SYM_RESOLVE_EXISTING(hidGetTouchScreenStates);

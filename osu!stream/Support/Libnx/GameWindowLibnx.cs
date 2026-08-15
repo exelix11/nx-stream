@@ -1,21 +1,16 @@
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using Libnx;
 using OpenTK.Graphics;
 using osum.GameModes;
 using osum.GameModes.Play;
-using osum.Helpers;
 
 namespace osum.Support.Libnx
 {
     public class GameWindowLibnx : GameWindow
     {
         public bool Running = true;
-
-        const int DOCK_CHECK_INTERVAL_MS = 4000;
-        bool isDocked = false;
-        int lastDockCheckTime = 0;
+        IDisposable focusGuard;
 
         public GameWindowLibnx()
             : base(1280, 720, GraphicsMode.Default, "osu!stream", GameWindowFlags.Fullscreen, DisplayDevice.Default, 3, 0, GraphicsContextFlags.Default)
@@ -23,14 +18,57 @@ namespace osum.Support.Libnx
             VSync = VSyncMode.On;
         }
 
+        void AppletFocusChange(Applet.AppletFocusState state)
+        {
+            Logging.Write($"Focus change detected: {state}");
+            if (state == Applet.AppletFocusState.InFocus) 
+                Applet.SetSuspendOnFocusLoss(false);
+            else 
+            {
+                (Director.CurrentMode as Player)?.Pause();
+                Applet.SetSuspendOnFocusLoss(true);
+            }
+        }
+
+        void AppletOperationModeChange(Applet.AppletOperationMode mode)
+        {
+            Logging.Write($"Operation mode change detected: {mode}");
+            (Director.CurrentMode as Player)?.Pause();
+            
+            var isDocked = mode == Applet.AppletOperationMode.Console;
+            var message = "This game can only be played in portable mode. Please undock your Switch to continue playing.";
+            
+            if (isDocked && GameBase.NotificationQueue.Count == 0)
+                GameBase.Notify(message);
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
+            // Trick to get suspend notifications: ask the os to not suspend us,
+            // When the notification that the app is in the background arrvies pause the game then ask to suspend again.
+            // When we get focus back ask again not to suspend for the next time.
+            // If we don't do this we only get on focus notifications which are too late to pause the game
+            Applet.SetSuspendOnFocusLoss(false);
+
+            focusGuard = Applet.HookAppletEvents(
+                focusChange: AppletFocusChange,
+                operationModeChange: AppletOperationModeChange);
+
             MakeCurrent();
             
             GameBase.Instance.Initialize();
+
+            // In case we start docked
+            AppletOperationModeChange(Applet.appletGetOperationMode());
         }
+
+		protected override void OnUnload(EventArgs e)
+		{
+            focusGuard?.Dispose();
+			base.OnUnload(e);
+		}
 
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -61,20 +99,6 @@ namespace osum.Support.Libnx
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-
-            var now = Clock.GetTime(ClockTypes.Game);
-            if (now > lastDockCheckTime + DOCK_CHECK_INTERVAL_MS)
-            {
-                lastDockCheckTime = now;
-                var docked = Applet.GetDockStatus();
-                if (!this.isDocked && docked)
-                {
-                    (Director.CurrentMode as Player)?.Pause();
-                    GameBase.Notify("This game can only be played in portable mode. Please undock your Switch to continue playing.");
-                }
-                
-                this.isDocked = docked;
-            }
             
             if (GameBase.Instance != null)
                 GameBase.Instance.Update();
