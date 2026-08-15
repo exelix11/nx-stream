@@ -432,9 +432,13 @@ namespace osum
 		{
 			Disposable = false;
 		}
-
+		
 		internal override void Play()
 		{
+			// This seems to be called multiple times and can Play() while already playing will reswind to the beginning, breaking pause in-game.
+			if (Playing)
+				return;
+
 			AL.SourcePlay(sourceId);
 		}
 
