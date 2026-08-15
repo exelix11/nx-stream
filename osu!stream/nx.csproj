@@ -9,7 +9,8 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <EnableDefaultItems>false</EnableDefaultItems>
 
-    <DefineConstants>$(DefineConstants);LIBNX;MONO;OSUM;DEBUG</DefineConstants>
+    <DefineConstants>$(DefineConstants);LIBNX;MONO;OSUM</DefineConstants>
+    <!-- <DefineConstants>$(DefineConstants)DEBUG</DefineConstants> -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -431,10 +432,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Beatmaps\nekodex - Liquid Future %28mm201%29.osf2">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Beatmaps\tieff &amp; Natteke - Endless Tower %28RandomJibberish%29.osf2">
+    <None Include="Beatmaps\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Skins\Default\Futura-CondensedExtraBold.ttf">

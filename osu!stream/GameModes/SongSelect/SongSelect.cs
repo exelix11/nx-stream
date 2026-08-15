@@ -158,6 +158,44 @@ namespace osum.GameModes.SongSelect
 
         public static bool ForceBeatmapRefresh;
 
+        void RegenerateDatabase()
+        {
+            Logging.Write("Regenerating database!");
+
+            ForceBeatmapRefresh = false;
+
+            foreach (string s in Directory.GetFiles(BeatmapPath, "*.os*"))
+            {
+                Beatmap b = new Beatmap(s);
+
+                if (b.Package == null)
+                    continue;
+
+                BeatmapDatabase.PopulateBeatmap(b);
+                maps.AddInPlace(b);
+            }
+
+            BeatmapDatabase.Write();
+        }
+
+        void LoadMapsFromDatabase(out bool hasMissingMaps)
+        {
+            hasMissingMaps = false;
+            foreach (BeatmapInfo bmi in BeatmapDatabase.BeatmapInfo)
+            {
+                Beatmap b = bmi.GetBeatmap();
+                if (!File.Exists(b.ContainerFilename))
+                {
+                    Logging.Write($"Beatmap {b.ContainerFilename} is missing, skipping.");
+                    hasMissingMaps = true;
+                    continue;
+                }
+
+                Logging.Write($"Loaded beatmap {b.ContainerFilename} from database");
+                maps.AddInPlace(b);
+            }
+        }
+
         /// <summary>
         /// Load beatmaps from the database, or by parsing the directory structure in fallback cases.
         /// </summary>
@@ -170,72 +208,35 @@ namespace osum.GameModes.SongSelect
 #if !DIST
             if (BeatmapDatabase.BeatmapInfo.Count > 0) // Just check if the database has something
             {
-            
                 // Check if the database matches the directory
-                string[] directoryBeatmaps = Directory.GetFiles(BeatmapPath, "*.osz2");
+                string[] directoryBeatmaps = Directory.GetFiles(BeatmapPath, "*.os*");
                 string[] databaseBeatmaps = BeatmapDatabase.BeatmapInfo.Select(
                     info =>
                     {
-                        return info.GetBeatmap().ContainerFilename;
+                        return info.GetBeatmap()?.ContainerFilename;
                     })
+                    .Where(x => x != null)
                     .ToArray();
 
-                // TODO: This check always returns true because == on arrays doesn't compare the contents
-                if (!(directoryBeatmaps == databaseBeatmaps))
+                Array.Sort(directoryBeatmaps);
+                Array.Sort(databaseBeatmaps);
+
+                Logging.Write($"Directory beatmaps: {string.Join("\n- ", directoryBeatmaps)}");
+                Logging.Write($"Database beatmaps: {string.Join("\n- ", databaseBeatmaps)}");
+
+                if (!directoryBeatmaps.SequenceEqual(databaseBeatmaps))
                 {
-                    recursiveBeatmaps(BeatmapPath);
                     Console.WriteLine("Changes detected, refreshing list.");
+                    RegenerateDatabase();
                 }
+                else LoadMapsFromDatabase(out _);
             }
             else
 #endif
-            if (BeatmapDatabase.BeatmapInfo.Count > 0 && !ForceBeatmapRefresh && BeatmapDatabase.Version == BeatmapDatabase.DATABASE_VERSION)
-            {
-                bool hasMissingMaps = false;
-                foreach (BeatmapInfo bmi in BeatmapDatabase.BeatmapInfo)
-                {
-                    Beatmap b = bmi.GetBeatmap();
-                    if (!File.Exists(b.ContainerFilename))
-                    {
-                        Logging.Write($"Beatmap {b.ContainerFilename} is missing, skipping.");
-                        hasMissingMaps = true;
-                        continue;
-                    }
-
-                    Logging.Write($"Loaded beatmap {b.ContainerFilename} from database");
-                    maps.AddInPlace(b);
-                }
-            }
-            else
-            {
-                Logging.Write("Regenerating database!");
-
-                ForceBeatmapRefresh = false;
-
-#if iOS
-                    //bundled maps
-                    foreach (string s in Directory.GetFiles("Beatmaps/"))
-                    {
-                        Beatmap b = new Beatmap(s);
-
-                        BeatmapDatabase.PopulateBeatmap(b);
-                        maps.AddInPlace(b);
-                    }
-#endif
-
-                foreach (string s in Directory.GetFiles(BeatmapPath, "*.os*"))
-                {
-                    Beatmap b = new Beatmap(s);
-
-                    if (b.Package == null)
-                        continue;
-
-                    BeatmapDatabase.PopulateBeatmap(b);
-                    maps.AddInPlace(b);
-                }
-
-                BeatmapDatabase.Write();
-            }
+                if (BeatmapDatabase.BeatmapInfo.Count > 0 && !ForceBeatmapRefresh && BeatmapDatabase.Version == BeatmapDatabase.DATABASE_VERSION)
+                    LoadMapsFromDatabase(out _);
+                else
+                    RegenerateDatabase();
 
             int index = 0;
 
