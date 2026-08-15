@@ -30,15 +30,13 @@ namespace OpenTK.Graphics.OpenGL
     using System;
     using System.Text;
     using System.Runtime.InteropServices;
-    #pragma warning disable 3019
-    #pragma warning disable 1591
+#pragma warning disable 3019
+#pragma warning disable 1591
 
     partial class GL
     {
-
-        internal static partial class Core
+        internal static class Core
         {
-
             [System.Security.SuppressUnmanagedCodeSecurity()]
             [System.Runtime.InteropServices.DllImport(GL.Library, EntryPoint = "glAccum", ExactSpelling = true)]
             internal extern static void Accum(OpenTK.Graphics.OpenGL.AccumOp op, Single value);

@@ -9,11 +9,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Diagnostics;
 using OpenTK.Graphics;
+
+#if !LIBNX
+using System.Windows.Forms;
+#endif
 
 #endregion
 
@@ -195,8 +198,8 @@ namespace OpenTK.Platform
             return context;
         }
 
+#if !LIBNX
         #region CreateX11WindowInfo
-
         /// <summary>
         /// Constructs a new IWindowInfo instance for the X11 platform.
         /// </summary>
@@ -235,7 +238,6 @@ namespace OpenTK.Platform
         #endregion
 
         #region CreateMacOSCarbonWindowInfo
-
         /// <summary>
         /// Creates an IWindowInfo instance for the Mac OS X platform.
         /// </summary>
@@ -247,8 +249,8 @@ namespace OpenTK.Platform
         {
             return new OpenTK.Platform.MacOS.CarbonWindowInfo(windowHandle, false, isControl);
         }
-
         #endregion
+#endif
 
         #region CreateDummyWindowInfo
 

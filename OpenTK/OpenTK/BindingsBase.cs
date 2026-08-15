@@ -27,10 +27,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Threading;
+
+[System.AttributeUsage(System.AttributeTargets.Delegate)]
+public sealed class MonoNativeFunctionWrapperAttribute : Attribute{}
 
 namespace OpenTK
 {
@@ -41,20 +43,8 @@ namespace OpenTK
     {
         #region Fields
 
-        /// <summary>
-        /// A reflection handle to the nested type that contains the function delegates.
-        /// </summary>
-        readonly protected Type DelegatesClass;
-
-        /// <summary>
-        /// A refection handle to the nested type that contains core functions (i.e. not extensions).
-        /// </summary>
-        readonly protected Type CoreClass;
-
-        /// <summary>
-        /// A mapping of core function names to MethodInfo handles.
-        /// </summary>
-        readonly protected SortedList<string, MethodInfo> CoreFunctionMap = new SortedList<string, MethodInfo>();
+        public record DelegateHandler(Func<IntPtr, Delegate> Factory, Action<Delegate> Setter, Action SetCore = null);
+        protected Dictionary<string, DelegateHandler> DelegateSetters;
 
         bool rebuildExtensionList = true;
 
@@ -62,23 +52,18 @@ namespace OpenTK
 
         #region Constructors
 
+        // Reflection support for AOT:
+        // OpenTK used reflection to load the Delegates and Core nested classes. And dynamically allocates delegates for Types via reflection
+        // This will not work, instead we insert these two functions that get auto generated (once manually for now) and populate the dictionaries
+        // Most importantly, now the delegates are called with a compile-time known type which works for mono aot
+        protected abstract void LoadExtensionSetters();
+
         /// <summary>
         /// Constructs a new BindingsBase instance.
         /// </summary>
         public BindingsBase()
         {
-            DelegatesClass = this.GetType().GetNestedType("Delegates", BindingFlags.Static | BindingFlags.NonPublic);
-            CoreClass = this.GetType().GetNestedType("Core", BindingFlags.Static | BindingFlags.NonPublic);
-
-            if (CoreClass != null)
-            {
-                MethodInfo[] methods = CoreClass.GetMethods(BindingFlags.Static | BindingFlags.NonPublic);
-                CoreFunctionMap = new SortedList<string, MethodInfo>(methods.Length); // Avoid resizing
-                foreach (MethodInfo m in methods)
-                {
-                    CoreFunctionMap.Add(m.Name, m);
-                }
-            }
+            LoadExtensionSetters();
         }
 
         #endregion
@@ -127,31 +112,33 @@ namespace OpenTK
 
         internal void LoadEntryPoints()
         {
-            // Using reflection is more than 3 times faster than directly loading delegates on the first
-            // run, probably due to code generation overhead. Subsequent runs are faster with direct loading
-            // than with reflection, but the first time is more significant.
-
             int supported = 0;
-
-            FieldInfo[] delegates = DelegatesClass.GetFields(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
-            if (delegates == null)
-                throw new InvalidOperationException("The specified type does not have any loadable extensions.");
-
             Debug.Write("Loading extensions for " + this.GetType().FullName + "... ");
 
             Stopwatch time = new Stopwatch();
             time.Reset();
             time.Start();
 
-            foreach (FieldInfo f in delegates)
+            foreach (var (k, v) in DelegateSetters)
             {
-                Delegate d = LoadDelegate(f.Name, f.FieldType);
-                if (d != null)
+                Delegate d = GetExtensionDelegate(k);
+                if (d != null || v.SetCore != null)
                     ++supported;
 
-                lock (SyncRoot)
+                try 
                 {
-                    f.SetValue(null, d);
+                    lock (SyncRoot) 
+                    {
+                        if (d == null && v.SetCore != null) 
+                            v.SetCore();
+                        else
+                            v.Setter(d);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.Print("Failed to set delegate for {0}: {1}", k, ex);
+                    throw;
                 }
             }
 
@@ -164,50 +151,14 @@ namespace OpenTK
 
         #endregion
 
-        #region LoadEntryPoint
-
-        internal bool LoadEntryPoint(string function)
-        {
-            FieldInfo f = DelegatesClass.GetField(function, BindingFlags.Static | BindingFlags.NonPublic);
-            if (f == null)
-                return false;
-
-            Delegate old = f.GetValue(null) as Delegate;
-            Delegate @new = LoadDelegate(f.Name, f.FieldType);
-            lock (SyncRoot)
-            {
-                if (old.Target != @new.Target)
-                {
-                    f.SetValue(null, @new);
-                }
-            }
-            return @new != null;
-        }
-
-        #endregion
-
         #endregion
 
         #region Private Members
 
-        #region LoadDelegate
-
-        // Tries to load the specified core or extension function.
-        Delegate LoadDelegate(string name, Type signature)
-        {
-            MethodInfo m;
-            return
-                GetExtensionDelegate(name, signature) ??
-                (CoreFunctionMap.TryGetValue((name.Substring(2)), out m) ?
-                Delegate.CreateDelegate(signature, m) : null);
-        }
-
-        #endregion
-
         #region GetExtensionDelegate
 
-        // Creates a System.Delegate that can be used to call a dynamically exported OpenGL function.
-        internal Delegate GetExtensionDelegate(string name, Type signature)
+        static int Allocated = 0;
+        Delegate GetExtensionDelegate(string name)
         {
             IntPtr address = GetAddress(name);
             
@@ -219,8 +170,14 @@ namespace OpenTK
             }
             else
             {
-                return Marshal.GetDelegateForFunctionPointer(address, signature);
+                //Debug.Print("Loading extension {0} at address {1} (total {2}).", name, address, Interlocked.Increment(ref Allocated));
+                return DelegateSetters[name].Factory(address);
             }
+        }
+
+        protected static Delegate Make<T>(IntPtr address) where T : Delegate
+        {
+            return Marshal.GetDelegateForFunctionPointer<T>(address);
         }
 
         #endregion

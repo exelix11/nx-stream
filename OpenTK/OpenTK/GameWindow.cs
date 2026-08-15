@@ -583,7 +583,7 @@ namespace OpenTK
         }
 
         #endregion
-
+#if !LIBNX
         #region Joysticks
 
         /// <summary>
@@ -619,7 +619,7 @@ namespace OpenTK
         }
 
         #endregion
-
+#endif
         #region --- GameWindow Timing ---
 
         // TODO: Disabled because it is not reliable enough. Use vsync as a workaround.

@@ -82,11 +82,13 @@ namespace OpenTK
             // Hack: it seems that this check will cause X to initialize itself on Mac OS X Leopard and newer.
             // We don't want that (we'll be using the native interfaces anyway), so we'll avoid this check
             // when we detect Mac OS X.
+            #if !LIBNX
             if (!RunningOnMacOS)
             {
                 try { runningOnX11 = OpenTK.Platform.X11.API.DefaultDisplay != IntPtr.Zero; }
                 catch { }
             }
+            #endif
 
             // Detect the Mono runtime (code taken from http://mono.wikia.com/wiki/Detecting_if_program_is_running_in_Mono).
             Type t = Type.GetType("Mono.Runtime");

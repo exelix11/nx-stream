@@ -32,6 +32,19 @@ using System.Drawing;
 using OpenTK.Platform;
 using System.ComponentModel;
 
+#if LIBNX
+namespace OpenTK.Input
+{
+    public interface IInputDriver
+    {
+    }
+
+    public interface IKeyboardDriver 
+    {
+    }
+}
+#endif
+
 namespace OpenTK
 {
     /// <summary>
@@ -39,10 +52,12 @@ namespace OpenTK
     /// </summary>
     public interface INativeWindow : IDisposable
     {
+        #if !LIBNX
         /// <summary>
         /// Gets or sets the <see cref="System.Drawing.Icon"/> of the window.
         /// </summary>
         Icon Icon { get; set; }
+        #endif
 
         /// <summary>
         /// Gets or sets the title of the window.

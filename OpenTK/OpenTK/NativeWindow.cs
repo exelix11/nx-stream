@@ -304,6 +304,7 @@ namespace OpenTK
 
         #region Icon
 
+#if !LIBNX
         /// <summary>
         /// Gets or sets the System.Drawing.Icon for this GameWindow.
         /// </summary>
@@ -320,7 +321,7 @@ namespace OpenTK
                 implementation.Icon = value;
             }
         }
-
+#endif
         #endregion
 
         #region InputDriver

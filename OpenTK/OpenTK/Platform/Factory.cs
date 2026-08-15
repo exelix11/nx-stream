@@ -31,7 +31,8 @@ using System.Text;
 
 namespace OpenTK.Platform
 {
-    using Graphics;
+	using System.Diagnostics;
+	using Graphics;
 
     sealed class Factory : IPlatformFactory
     {
@@ -45,17 +46,24 @@ namespace OpenTK.Platform
 
         static Factory()
         {
+#if !LIBNX
             if (Configuration.RunningOnWindows) Default = new Windows.WinFactory();
             else if (Configuration.RunningOnMacOS) Default = new MacOS.MacOSFactory();
             else if (Configuration.RunningOnX11) Default = new X11.X11Factory();
-            else Default = new UnsupportedPlatform();
+            else 
+#endif
+            Default = new UnsupportedPlatform();
 
             if (Egl.Egl.IsSupported)
             {
+#if !LIBNX
                 if (Configuration.RunningOnWindows) Embedded = new Egl.EglWinPlatformFactory();
                 else if (Configuration.RunningOnMacOS) Embedded = new Egl.EglMacPlatformFactory();
                 else if (Configuration.RunningOnX11) Embedded = new Egl.EglX11PlatformFactory();
                 else Embedded = new UnsupportedPlatform();
+#else
+                Embedded = new Libnx.EglLibnxFactory();
+#endif
             }
             else Embedded = new UnsupportedPlatform();
 
@@ -113,7 +121,7 @@ namespace OpenTK.Platform
         {
             return default_implementation.CreateGraphicsMode();
         }
-        
+
         public OpenTK.Input.IKeyboardDriver CreateKeyboardDriver()
         {
             return default_implementation.CreateKeyboardDriver();
@@ -122,11 +130,11 @@ namespace OpenTK.Platform
         class UnsupportedPlatform : IPlatformFactory
         {
             #region Fields
-            
+
             static readonly string error_string = "Please, refer to http://www.opentk.com for more information.";
-            
+
             #endregion
-            
+
             #region IPlatformFactory Members
 
             public INativeWindow CreateNativeWindow(int x, int y, int width, int height, string title, GraphicsMode mode, GameWindowFlags options, DisplayDevice device)
@@ -168,7 +176,7 @@ namespace OpenTK.Platform
             {
                 throw new PlatformNotSupportedException(error_string);
             }
-            
+
             #endregion
         }
 

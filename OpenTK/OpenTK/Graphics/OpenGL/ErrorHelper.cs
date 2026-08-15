@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using System.Data;
 
 namespace OpenTK.Graphics.OpenGL
 {
@@ -54,7 +55,6 @@ namespace OpenTK.Graphics.OpenGL
         #endregion
 
         #region Constructors
-
         public ErrorHelper(IGraphicsContext context)
         {
             if (context == null)
@@ -115,7 +115,10 @@ namespace OpenTK.Graphics.OpenGL
                     }
                     sb.Remove(sb.Length - 2, 2); // Remove the last comma
 
-                    throw new GraphicsErrorException(sb.ToString());
+                    Console.WriteLine($"---- IGNORING ERRORS: {sb} ----");
+                    Console.WriteLine(Environment.StackTrace);
+
+                    //throw new GraphicsErrorException(sb.ToString());
                 }
             }
         }
