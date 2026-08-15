@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using osum.Helpers;
 
 #if iOS
 using Foundation;
@@ -66,7 +68,7 @@ namespace osum.Libraries.NetLib
 
 #if !DIST
             if (error != null)
-                Console.WriteLine("ERROR: " + error.ToString());
+                Logging.Write("ERROR: " + error.ToString());
 #endif
 
             nr.TriggerUpdate();
@@ -133,6 +135,7 @@ namespace osum.Libraries.NetLib
         {
             try
             {
+
                 //inform subscribers that we have started
                 onStart?.Invoke();
 
@@ -154,7 +157,7 @@ namespace osum.Libraries.NetLib
 
 #if !DIST
                 if (error != null)
-                    Console.WriteLine("requst finished with error " + error);
+                    Logging.Write("requst finished with error " + error);
 #endif
 
 #else
@@ -251,7 +254,7 @@ namespace osum.Libraries.NetLib
         public override void OnException(Exception e)
         {
 #if !DIST
-            Console.WriteLine("net error:" + e);
+            Logging.Write("net error:" + e);
 #endif
             processFinishedRequest();
         }

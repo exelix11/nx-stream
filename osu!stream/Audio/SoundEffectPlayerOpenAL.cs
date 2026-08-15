@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using OpenTK.Audio;
 using OpenTK.Audio.OpenAL;
 using osum.AssetManager;
 using osum.Helpers.Audio;
@@ -12,35 +11,15 @@ namespace osum.Audio
     /// </summary>
     public class SoundEffectPlayerOpenAL : SoundEffectPlayer
     {
-        /// <summary>
-        /// Current OpenAL context.
-        /// </summary>
-        private AudioContext context;
-
         public SoundEffectPlayerOpenAL()
         {
-            try
-            {
-                context = new AudioContext();
-            }
-            catch (DllNotFoundException)
-            {
-                //needs openal32.dll
-                throw new ApplicationException("OpenAL failed to initialize. Please run oainst.exe and try again.");
-            }
-            catch (AudioException)
-            {
-                //todo: handle error here.
-            }
-            catch (TypeInitializationException)
-            {
-                throw new ApplicationException("OpenAL failed to initialize. Please run oainst.exe and try again.");
-            }
+            var context = OpenALSharedContext.Context;
+            var reserve = OpenALSharedContext.ReservedSources;
 
-            int[] sources = AL.GenSources(MAX_SOURCES);
-            sourceInfo = new Source[MAX_SOURCES];
+            int[] sources = AL.GenSources(MAX_SOURCES - reserve);
+            sourceInfo = new Source[MAX_SOURCES - reserve];
 
-            for (int i = 0; i < MAX_SOURCES; i++)
+            for (int i = 0; i < sourceInfo.Length; i++)
             {
                 Source info = sourceInfo[i];
 
@@ -146,11 +125,9 @@ namespace osum.Audio
             }
         }
 
-
         internal override void Play()
-        {
-            if (!Playing)
-                AL.SourcePlay(sourceId);
+        {                
+            AL.SourcePlay(sourceId);
         }
 
         internal override void Stop()
@@ -159,11 +136,19 @@ namespace osum.Audio
                 AL.SourceStop(sourceId);
         }
 
+        internal void DetachBuffer()
+        {
+            AL.Source(sourceId, ALSourcei.Buffer, 0);
+            bufferId = 0;
+        }
+
         internal override void DeleteBuffer()
         {
-            //must unload before deleting.
+            //must unload before deleting but do not call detatchbuffer or we won't be able to free it
             AL.Source(sourceId, ALSourcei.Buffer, 0);
-            AL.DeleteBuffer(bufferId);
+            
+            if (bufferId != 0)
+                AL.DeleteBuffer(bufferId);
 
             base.DeleteBuffer();
         }

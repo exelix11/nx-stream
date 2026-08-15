@@ -4,7 +4,6 @@ using System.Security.Permissions;
 
 namespace osum.Helpers
 {
-    [HostProtection(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
     public sealed class AesManaged : Aes
     {
         // Fields

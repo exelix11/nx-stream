@@ -50,7 +50,9 @@ namespace osum.GameModes.SongSelect
 
         private bool pendingModeChange;
         private bool isBound;
+#if !LIBNX
         private BeatmapPanel panelDownloadMore;
+#endif
         private pSprite background;
 
         /// <summary>
@@ -168,7 +170,7 @@ namespace osum.GameModes.SongSelect
 #if !DIST
             if (BeatmapDatabase.BeatmapInfo.Count > 0) // Just check if the database has something
             {
-                
+            
                 // Check if the database matches the directory
                 string[] directoryBeatmaps = Directory.GetFiles(BeatmapPath, "*.osz2");
                 string[] databaseBeatmaps = BeatmapDatabase.BeatmapInfo.Select(
@@ -178,6 +180,7 @@ namespace osum.GameModes.SongSelect
                     })
                     .ToArray();
 
+                // TODO: This check always returns true because == on arrays doesn't compare the contents
                 if (!(directoryBeatmaps == databaseBeatmaps))
                 {
                     recursiveBeatmaps(BeatmapPath);
@@ -194,18 +197,18 @@ namespace osum.GameModes.SongSelect
                     Beatmap b = bmi.GetBeatmap();
                     if (!File.Exists(b.ContainerFilename))
                     {
+                        Logging.Write($"Beatmap {b.ContainerFilename} is missing, skipping.");
                         hasMissingMaps = true;
                         continue;
                     }
 
+                    Logging.Write($"Loaded beatmap {b.ContainerFilename} from database");
                     maps.AddInPlace(b);
                 }
             }
             else
             {
-#if !DIST
-                Console.WriteLine("Regenerating database!");
-#endif
+                Logging.Write("Regenerating database!");
 
                 ForceBeatmapRefresh = false;
 
@@ -213,7 +216,6 @@ namespace osum.GameModes.SongSelect
                     //bundled maps
                     foreach (string s in Directory.GetFiles("Beatmaps/"))
                     {
-
                         Beatmap b = new Beatmap(s);
 
                         BeatmapDatabase.PopulateBeatmap(b);
@@ -253,7 +255,7 @@ namespace osum.GameModes.SongSelect
                 topmostSpriteManager.Add(panel);
                 panels.Add(panel);
             }
-
+#if !LIBNX
             panelDownloadMore = new BeatmapPanel(null, delegate
             {
                 AudioEngine.PlaySample(OsuSamples.MenuHit);
@@ -272,6 +274,7 @@ namespace osum.GameModes.SongSelect
             panelDownloadMore.s_Text.Offset.Y += 16;
             panels.Add(panelDownloadMore);
             topmostSpriteManager.Add(panelDownloadMore);
+#endif
         }
 
         private void recursiveBeatmaps(string subdir)
@@ -282,7 +285,7 @@ namespace osum.GameModes.SongSelect
             foreach (string ss in Directory.GetDirectories(subdir))
                 recursiveBeatmaps(ss);
 
-            foreach (string s in Directory.GetFiles(subdir, "*.osz2"))
+            foreach (string s in Directory.GetFiles(subdir, "*.os*"))
             {
                 Beatmap b = new Beatmap(s);
                 BeatmapDatabase.PopulateBeatmap(b);
@@ -502,7 +505,7 @@ namespace osum.GameModes.SongSelect
 
                                             if (AudioEngine.Music != null && (AudioEngine.Music.LastLoaded != panel.Beatmap.PackageIdentifier))
                                             {
-                                                AudioEngine.Music.Load(panel.Beatmap.GetFileBytes(panel.Beatmap.AudioFilename), false, panel.Beatmap.PackageIdentifier);
+                                                AudioEngine.Music.LoadAsync(panel.Beatmap.GetFileBytes(panel.Beatmap.AudioFilename), false, panel.Beatmap.PackageIdentifier);
                                                 if (!AudioEngine.Music.IsElapsing)
                                                     playFromPreview();
 

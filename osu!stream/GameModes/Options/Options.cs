@@ -130,7 +130,12 @@ namespace osum.GameModes.Options
 
             vPos += 60;
 
+#if LIBNX
+            // Switch OS also supports bluetooth headphones but the delay there is much higher, while this is not optimal we should allow users to use them since this is a handheld.
+            const int offset_range = 250;
+#else
             const int offset_range = 32;
+#endif
 
             universalOffsetSlider = new SliderControl(LocalisationManager.GetString(OsuString.UniversalOffset), (float)(Clock.USER_OFFSET + offset_range) / (offset_range * 2), new Vector2(button_x_offset - 30, vPos),
                 delegate(float v)

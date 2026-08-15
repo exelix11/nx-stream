@@ -15,7 +15,7 @@ namespace osum.GameplayElements
     internal static class BeatmapDatabase
     {
         internal const int DATABASE_VERSION = 12;
-        private const string FILENAME = "osu!.db";
+        private const string FILENAME = "osu.db";
 
         private static string databasePath => GameBase.Instance.PathConfig + FILENAME;
 
@@ -45,7 +45,7 @@ namespace osum.GameplayElements
                 catch (Exception e)
                 {
 #if DEBUG
-                    Console.WriteLine("Error while reading database! " + e);
+                    Logging.Write("Error while reading database! " + e);
 #endif
                 }
             }
@@ -71,7 +71,7 @@ namespace osum.GameplayElements
 #endif
 
 #if DEBUG
-            Console.WriteLine("Read beatmap database: " + BeatmapInfo.Count);
+            Logging.Write("Read beatmap database: " + BeatmapInfo.Count);
 #endif
         }
 
@@ -96,7 +96,7 @@ namespace osum.GameplayElements
             File.Move(tempFilename, filename);
 
 #if DEBUG
-            Console.WriteLine("Wrote beatmap database to " + filename + " with count " + BeatmapInfo.Count);
+            Logging.Write("Wrote beatmap database to " + filename + " with count " + BeatmapInfo.Count);
 #endif
         }
 
@@ -217,9 +217,9 @@ namespace osum.GameplayElements
         {
             if (Filename == null) return null;
 
-            string path = SongSelectMode.BeatmapPath + "/" + Filename;
+            string path = Path.Join(SongSelectMode.BeatmapPath, Filename);
             if (Filename.EndsWith(".osf2") && !File.Exists(path))
-                path = "Beatmaps/" + Filename;
+                path = Path.Join("Beatmaps", Filename);
 
             return new Beatmap(path) { BeatmapInfo = this };
         }

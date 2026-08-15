@@ -146,7 +146,7 @@ namespace osum.GameModes.Store
                     {
                         AddPack(pp);
 #if DEBUG
-                        Console.WriteLine("Adding pack: " + split[0]);
+                        Logging.Write("Adding pack: " + split[0]);
 #endif
 
                         string packId = split[0];
@@ -170,7 +170,7 @@ namespace osum.GameModes.Store
                     //string youtubeId = length > 4 ? split[4] : null;
                     string updateChecksum = null;
 
-                    string path = SongSelectMode.BeatmapPath + "/" + filename;
+                    string path = Path.Join(SongSelectMode.BeatmapPath, filename);
 
                     if (File.Exists(path))
                     {
@@ -179,7 +179,7 @@ namespace osum.GameModes.Store
                             if (b.Package != null)
                             {
 #if DEBUG
-                                Console.WriteLine("loaded package");
+                                Logging.Write("loaded package");
 #endif
                                 string localRev = b.Package.GetMetadata(MapMetaType.Revision) ?? "1.0";
 
@@ -187,7 +187,7 @@ namespace osum.GameModes.Store
                                     continue;
 
 #if DEBUG
-                                Console.WriteLine("Local revision is " + localRev + " | Remote revision is " + revision);
+                                Logging.Write("Local revision is " + localRev + " | Remote revision is " + revision);
 #endif
 
                                 if (float.Parse(localRev, GameBase.nfi) >= float.Parse(revision, GameBase.nfi))
@@ -199,7 +199,7 @@ namespace osum.GameModes.Store
                     }
 
 #if DEBUG
-                    Console.WriteLine("Adding beatmap: " + filename);
+                    Logging.Write("Adding beatmap: " + filename);
 #endif
 
                     pp.AddItem(new PackItem(filename, title, updateChecksum));

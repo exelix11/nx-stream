@@ -75,15 +75,15 @@ namespace osum.GameModes.Store
 #if !DIST
             foreach (SKProduct product in response.Products)
             {
-                Console.WriteLine("Localised price:" + product.LocalizedPrice());
-                Console.WriteLine("Product title: " + product.LocalizedTitle);
-                Console.WriteLine("Product description: " + product.LocalizedDescription);
-                Console.WriteLine("Product price: " + product.LocalizedPrice());
-                Console.WriteLine("Product id: " + product.ProductIdentifier);
+                Logging.Write("Localised price:" + product.LocalizedPrice());
+                Logging.Write("Product title: " + product.LocalizedTitle);
+                Logging.Write("Product description: " + product.LocalizedDescription);
+                Logging.Write("Product price: " + product.LocalizedPrice());
+                Logging.Write("Product id: " + product.ProductIdentifier);
             }
 
             foreach (string invalidProductId in response.InvalidProducts)
-                Console.WriteLine("Invalid product id: " + invalidProductId);
+                Logging.Write("Invalid product id: " + invalidProductId);
 #endif
 
             if (responseDelegate != null)
@@ -111,7 +111,7 @@ namespace osum.GameModes.Store
             purchaseCompleteDelegate = purchaseCompleteResponse;
 
 #if !DIST
-            Console.WriteLine("Beginning purchase of " + productId);
+            Logging.Write("Beginning purchase of " + productId);
 #endif
 
             attachObserver();
@@ -126,7 +126,7 @@ namespace osum.GameModes.Store
         public void finishTransaction(SKPaymentTransaction transaction, bool wasSuccessful)
         {
 #if !DIST
-            Console.WriteLine("Purchase compete with " + (wasSuccessful ? "success" : "failure"));
+            Logging.Write("Purchase compete with " + (wasSuccessful ? "success" : "failure"));
 #endif
 
             if (purchaseCompleteDelegate != null)
@@ -163,7 +163,7 @@ namespace osum.GameModes.Store
             if (transaction != null)
             {
 #if !DIST
-                Console.WriteLine("Transaction failed with error code:" + transaction.Error.Code);
+                Logging.Write("Transaction failed with error code:" + transaction.Error.Code);
 #endif
                 if (transaction.Error != null && transaction.Error.Code != 2)
                 {

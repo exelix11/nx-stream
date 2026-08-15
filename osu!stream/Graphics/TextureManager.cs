@@ -40,6 +40,7 @@ using OpenTK.Graphics;
 using osum.AssetManager;
 using osum.Graphics.Sprites;
 using osum.Helpers;
+using System.Diagnostics;
 
 
 namespace osum.Graphics
@@ -115,7 +116,7 @@ namespace osum.Graphics
                 if (!p.usedSinceLastModeChange && p.Loaded)
                 {
 #if !DIST
-                    Console.WriteLine("unloaded texture " + p.Id);
+                    Logging.Write("unloaded texture " + p.Id);
 #endif
                     p.Delete();
                 }
@@ -199,7 +200,6 @@ namespace osum.Graphics
             }
 
             string path = @"Skins/Default/" + name + "_" + GameBase.SpriteSheetResolution + ".png";
-
             if (NativeAssetManager.Instance.FileExists(path))
             {
                 pTexture texture = pTexture.FromFile(path);
@@ -212,6 +212,11 @@ namespace osum.Graphics
 
                     texture.TextureGl = glTexture;
                     return texture;
+                }
+                else
+                {
+                    // TODO: This always fails?
+                    //Logging.Write("Failed to load texture: " + name + " from path: " + path);
                 }
 
                 SpriteTextureCache.Add(name, texture.TextureGl);

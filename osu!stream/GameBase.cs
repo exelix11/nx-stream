@@ -1,46 +1,9 @@
-#if iOS || ANDROID
-using OpenTK.Graphics.ES11;
-#if iOS
-using Foundation;
-using ObjCRuntime;
-using OpenGLES;
-#endif
-
-using TextureTarget = OpenTK.Graphics.ES11.All;
-using TextureParameterName = OpenTK.Graphics.ES11.All;
-using EnableCap = OpenTK.Graphics.ES11.All;
-using ArrayCap = OpenTK.Graphics.ES11.All;
-using BlendingFactorSrc = OpenTK.Graphics.ES11.All;
-using BlendingFactorDest = OpenTK.Graphics.ES11.All;
-using PixelStoreParameter = OpenTK.Graphics.ES11.All;
-using VertexPointerType = OpenTK.Graphics.ES11.All;
-using ColorPointerType = OpenTK.Graphics.ES11.All;
-using ClearBufferMask = OpenTK.Graphics.ES11.All;
-using TexCoordPointerType = OpenTK.Graphics.ES11.All;
-using BeginMode = OpenTK.Graphics.ES11.All;
-using DepthFunction = OpenTK.Graphics.ES11.All;
-using MatrixMode = OpenTK.Graphics.ES11.All;
-using PixelInternalFormat = OpenTK.Graphics.ES11.All;
-using PixelFormat = OpenTK.Graphics.ES11.All;
-using PixelType = OpenTK.Graphics.ES11.All;
-using ShaderType = OpenTK.Graphics.ES11.All;
-using VertexAttribPointerType = OpenTK.Graphics.ES11.All;
-using ProgramParameter = OpenTK.Graphics.ES11.All;
-using ShaderParameter = OpenTK.Graphics.ES11.All;
-#if iOS
-using CoreGraphics;
-using UIKit;
-#endif
-#else
-using OpenTK.Graphics.OpenGL;
-#endif
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Threading;
-using OpenTK;
 using OpenTK.Graphics;
 using osum.AssetManager;
 using osum.Audio;
@@ -52,7 +15,6 @@ using osum.Input;
 using osum.Localisation;
 using osum.Support;
 using osum.UI;
-
 
 namespace osum
 {
@@ -133,7 +95,7 @@ namespace osum
 
             //initialise config before everything, because it may be used in Initialize() override.
             Config = new pConfigManager(Instance.PathConfig + "osum.cfg");
-
+            
             Clock.USER_OFFSET = Config.GetValue("offset", 0);
         }
 
@@ -265,9 +227,9 @@ namespace osum
             //480x  = 480/960   = 0.5
 
 #if FULL_DEBUG
-            Console.WriteLine("Base Resolution is " + BaseSize + " (fixed: " + BaseSizeFixedWidth + ")");
-            Console.WriteLine("Sprite Resolution is " + SpriteResolution + " with SpriteSheet " + SpriteSheetResolution);
-            Console.WriteLine("Sprite multiplier is " + SpriteToBaseRatio + " or aligned at " + SpriteToBaseRatioAligned);
+            Logging.Write("Base Resolution is " + BaseSize + " (fixed: " + BaseSizeFixedWidth + ")");
+            Logging.Write("Sprite Resolution is " + SpriteResolution + " with SpriteSheet " + SpriteSheetResolution);
+            Logging.Write("Sprite multiplier is " + SpriteToBaseRatio + " or aligned at " + SpriteToBaseRatioAligned);
 #endif
 
             TriggerLayoutChanged();
@@ -352,7 +314,7 @@ namespace osum
             //benchmark
 
             string path = SongSelectMode.BeatmapPath + "/Aperture Science Psychoacoustics Laboratory - Want You Gone (Larto).osz2";
-            Console.WriteLine(path);
+            Logging.Write(path);
 
             Player.Beatmap = new osum.GameplayElements.Beatmaps.Beatmap(path);
             Player.Difficulty = osum.GameplayElements.Difficulty.Expert;

@@ -45,7 +45,7 @@ namespace osum.Audio
         {
             int freeSource = -1;
 
-            for (int i = 0; i < MAX_SOURCES; i++)
+            for (int i = 0; i < sourceInfo.Length; i++)
             {
                 Source n = sourceInfo[i];
 

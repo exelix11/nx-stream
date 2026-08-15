@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using System.Security.Cryptography;
+using acryptohashnet;
 using System.Text;
 
 namespace osum.Helpers
 {
     public static class CryptoHelper
     {
-        private static readonly MD5 md5Hasher = MD5.Create();
+        private static readonly MD5 md5Hasher = new MD5();
         private static readonly UTF8Encoding utf8Encoding = new UTF8Encoding();
         private static readonly NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
 

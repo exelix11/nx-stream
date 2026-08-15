@@ -13,7 +13,7 @@ namespace osum.Libraries.NetLib
             : base(_url, method, postData)
         {
 #if DEBUG
-            Console.WriteLine("URL: " + _url + "\nPOST: " + postData);
+            Logging.Write("URL: " + _url + "\nPOST: " + postData);
 #endif
         }
 

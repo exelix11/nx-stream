@@ -258,7 +258,7 @@ namespace osum.GameModes.Store
                 PackItem item = PackItems[currentDownload];
                 pDrawable back = songPreviewBacks[currentDownload];
 
-                string path = SongSelectMode.BeatmapPath + "/" + item.Filename;
+                string path = Path.Join(SongSelectMode.BeatmapPath, item.Filename);
 
                 string receipt64 = Receipt != null ? Convert.ToBase64String(Receipt) : "";
 
@@ -267,8 +267,8 @@ namespace osum.GameModes.Store
                 if (item.UpdateChecksum != null)
                     param += "&update=" + item.UpdateChecksum;
 #if DEBUG
-                Console.WriteLine("Downloading " + downloadPath);
-                Console.WriteLine("param " + param);
+                Logging.Write("Downloading " + downloadPath);
+                Logging.Write("param " + param);
 #endif
 
                 FileNetRequest fnr = new FileNetRequest(path, downloadPath, "POST", param);

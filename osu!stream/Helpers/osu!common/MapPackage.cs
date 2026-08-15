@@ -18,7 +18,7 @@ namespace osum.Helpers
 
         private const int F_OFFSET_METADATA = 68;
         private const byte VERSION_EXPORT = 0;
-        private static readonly MD5CryptoServiceProvider fHasher = new MD5CryptoServiceProvider();
+        private static readonly acryptohashnet.MD5 fHasher = new acryptohashnet.MD5();
 
         //free key is changed for dist builds
         private byte[] k;
@@ -100,7 +100,7 @@ namespace osum.Helpers
             catch (Exception e)
             {
 #if DEBUG
-                Console.WriteLine("error in package: " + e);
+                Logging.Write("error in package: " + e);
 #endif
                 Close();
                 throw;
@@ -135,7 +135,7 @@ namespace osum.Helpers
             catch (Exception e)
             {
 #if DEBUG
-                Console.WriteLine("error in package: " + e);
+                Logging.Write("error in package: " + e);
 #endif
                 Close();
                 throw;
@@ -299,7 +299,7 @@ namespace osum.Helpers
         private void doPostProcessing(BinaryReader br)
         {
             HasPostProcessed = true;
-
+            using var _ = new Support.Benchmarker($"Postprocessing map package {fFilename}");
 
 #if !NO_ENCRYPTION
             //check whether we have the correct key by comparing to a known plain.

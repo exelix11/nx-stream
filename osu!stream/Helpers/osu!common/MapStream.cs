@@ -83,7 +83,7 @@ namespace osum.Helpers
             internalStream.Read(decryptedBuffer, 0, fLength);
             //Array.Copy(internalBuffer, 4, decryptedBuffer, 0, fLength);
             encryptor.Decrypt(decryptedBuffer);
-            Console.WriteLine("<<<<<<<<<<MAPSTREAM OPENED>>>>>>>>>>>>");
+            Logging.Write("<<<<<<<<<<MAPSTREAM OPENED>>>>>>>>>>>>");
             internalStream.Position = fPosition;
 #endif
 

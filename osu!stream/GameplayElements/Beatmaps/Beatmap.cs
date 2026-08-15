@@ -44,6 +44,7 @@ namespace osum.GameplayElements.Beatmaps
                     if (package == null)
                     {
                         if (ContainerFilename == null) return null;
+                        using var _ = new Support.Benchmarker($"Loading map package {ContainerFilename}");
 #if iOS && DIST
                         if (ContainerFilename.EndsWith("osf2") || ContainerFilename.EndsWith ("osz2"))
                             package = new MapPackage(ContainerFilename);
@@ -54,9 +55,10 @@ namespace osum.GameplayElements.Beatmaps
 #endif
                     }
                 }
-                catch
+                catch (Exception e)
                 {
-                    return null;
+                    Logging.Write($"Error loading map package {ContainerFilename}: {e}");
+                    package = null;
                 }
 
                 return package;
@@ -91,7 +93,7 @@ namespace osum.GameplayElements.Beatmaps
                 string deviceId = GameBase.Instance.DeviceIdentifier;
                 string str = (char)0x6f + Path.GetFileName(ContainerFilename) + (char)0x73 + deviceId.Substring(0, 2) + (char)0x75 + deviceId.Substring(2) + (char)0x6d;
 #if DEBUG
-                Console.WriteLine("key: " + str);
+                Logging.Write("key: " + str);
 #endif
                 return CryptoHelper.GetMd5ByteArrayString(str);
             }
@@ -118,7 +120,7 @@ namespace osum.GameplayElements.Beatmaps
                 if (stream != null)
                 {
                     data = new byte[stream.Length];
-                    stream.Read(data, 0, data.Length);
+                    stream.ReadExactly(data, 0, data.Length);
                     //stream.Close();
                 }
             }

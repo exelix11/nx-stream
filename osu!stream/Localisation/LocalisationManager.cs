@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using osum.AssetManager;
@@ -26,7 +27,7 @@ namespace osum.Localisation
             readResources("en");
             string regionalSetting = Thread.CurrentThread.CurrentUICulture.ToString();
 
-            if (regionalSetting == "en") return;
+            if (string.IsNullOrWhiteSpace(regionalSetting) || regionalSetting == "en") return;
 
             if (!regionalSetting.StartsWith("zh")) //chinese has sub-localisations for traditional/simplified.
                 regionalSetting = regionalSetting.Substring(0, 2);

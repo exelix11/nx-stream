@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using osum.AssetManager;
 using osum.Helpers;
@@ -61,6 +62,15 @@ namespace osum.Audio
 
             LastLoaded = identifier;
             return true;
+        }
+
+        /// <summary>
+        /// Loads an audio track. On some platforms this happens asynchronously.
+        /// </summary>
+        public virtual bool LoadAsync(byte[] audio, bool looping, string identifier = null)
+        {
+            // Only implemented on libnx, on other platforms just load synchronously
+            return Load(audio, looping, identifier);
         }
 
         public string LastLoaded;

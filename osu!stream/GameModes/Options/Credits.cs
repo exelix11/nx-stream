@@ -66,7 +66,8 @@ namespace osum.GameModes.Options
             "*Thanks to",
             "Nuudles - Developing the cydia osu! release which is still standing strong",
             "Testers - Special thanks to Cyclone, Doddler, dvorak, Guy-kun, James, mattyu007, nekodex, PJMS, Saphier, tobebuta and my mum (i'm serious)",
-            "#bat - For support and help on various occasions"
+            "#bat - For support and help on various occasions",
+            "exelix11 - switch homebrew port and mono-nx",
         };
 
         private readonly int beatLength = 800;

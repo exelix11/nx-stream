@@ -116,12 +116,12 @@ namespace osum.Helpers.Audio
         /// </summary>
         public void DumpParamsToConsole()
         {			
-            Console.WriteLine("AudioFormat:" + AudioFormat);
-            Console.WriteLine("Channels:" + Channels);
-            Console.WriteLine("SampleRate:" + SampleRate);
-            Console.WriteLine("ByteRate:" + ByteRate);
-            Console.WriteLine("BlockAlign:" + BlockAlign);
-            Console.WriteLine("BitsPerSample:" + BitsPerSample);
+            Logging.Write("AudioFormat:" + AudioFormat);
+            Logging.Write("Channels:" + Channels);
+            Logging.Write("SampleRate:" + SampleRate);
+            Logging.Write("ByteRate:" + ByteRate);
+            Logging.Write("BlockAlign:" + BlockAlign);
+            Logging.Write("BitsPerSample:" + BitsPerSample);
         }
         
         /// <value>
@@ -218,7 +218,7 @@ namespace osum.Helpers.Audio
                     throw new AudioReaderException("Invalid WAVE/RIFF file: invalid or corrupt signature.");
 
 #if DEBUF
-                Console.WriteLine(String.Format("Opened WAVE/RIFF file: ({0}, {1}, {2}, {3}) ", sample_rate.ToString(), bits_per_sample.ToString(),
+                Logging.Write(String.Format("Opened WAVE/RIFF file: ({0}, {1}, {2}, {3}) ", sample_rate.ToString(), bits_per_sample.ToString(),
                                           channels.ToString(), audio_format.ToString()));
 #endif
             }

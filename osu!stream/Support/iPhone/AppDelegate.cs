@@ -108,8 +108,8 @@ namespace osum.Support.iPhone
                 GameBase.NativeSize = new Size((int)(bounds.Height * GameBase.ScaleFactor), (int)(bounds.Width * GameBase.ScaleFactor));
 
 #if !DIST
-            Console.WriteLine("scale factor " + GameBase.ScaleFactor);
-            Console.WriteLine("native size " + GameBase.NativeSize);
+            Logging.Write("scale factor " + GameBase.ScaleFactor);
+            Logging.Write("native size " + GameBase.NativeSize);
 #endif
             GameBase.TriggerLayoutChanged();
 
@@ -151,7 +151,7 @@ namespace osum.Support.iPhone
         public override void ReceiveMemoryWarning(UIApplication application)
         {
 #if !DIST
-            Console.WriteLine("OSU MEMORY CLEANUP!");
+            Logging.Write("OSU MEMORY CLEANUP!");
 #endif
 
             if (Clock.Time - lastCleanup < 1000) return;

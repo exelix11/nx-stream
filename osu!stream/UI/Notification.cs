@@ -28,7 +28,7 @@ namespace osum.UI
                 DimImmune = true
             };
 
-            pText titleText = new pText(title, 36, new Vector2(0, -130), new Vector2(500 * GameBase.SpriteToBaseRatio, 0), 1, true, Color4.White, true)
+            pText titleText = new pText(title, 36, new Vector2(0, -130), new Vector2(900 * GameBase.SpriteToBaseRatio, 0), 1, true, Color4.White, true)
             {
                 Field = FieldTypes.StandardSnapCentre,
                 Origin = OriginTypes.Centre,
@@ -37,7 +37,7 @@ namespace osum.UI
                 DimImmune = true
             };
 
-            pText descText = new pText(description, 24, new Vector2(0, -90), new Vector2(500 * GameBase.SpriteToBaseRatio, 0), 1, true, Color4.White, false)
+            pText descText = new pText(description, 24, new Vector2(0, -90), new Vector2(900 * GameBase.SpriteToBaseRatio, 0), 1, true, Color4.White, false)
             {
                 Field = FieldTypes.StandardSnapCentre,
                 Origin = OriginTypes.TopCentre,

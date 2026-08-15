@@ -378,7 +378,7 @@ namespace osum.GameModes.Play
         public override void Dispose()
         {
 #if !DIST && !MONO
-            Console.WriteLine("Player.cs produced " + frameCount + " frames.");
+            Logging.Write("Player.cs produced " + frameCount + " frames.");
 #endif
             if (GameBase.Instance != null) GameBase.Instance.DisableDimming = false;
 
@@ -638,7 +638,7 @@ namespace osum.GameModes.Play
                         if (CurrentScore.comboBonusScore + CurrentScore.hitScore > Score.HIT_PLUS_COMBO_BONUS_AMOUNT)
                         {
 #if !DIST
-                            Console.WriteLine("WARNING: Score exceeded limits at " + CurrentScore.totalScore);
+                            Logging.Write("WARNING: Score exceeded limits at " + CurrentScore.totalScore);
 #if SCORE_TESTING
                             File.AppendAllText(scoreTestFilename, "WARNING: Score exceeded limits at " + CurrentScore.totalScore + "\n");
 #endif

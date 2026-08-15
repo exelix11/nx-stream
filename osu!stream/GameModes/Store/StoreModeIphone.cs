@@ -12,7 +12,7 @@ namespace osum.GameModes.Store
 
         public StoreModeIphone()
         {
-            Console.WriteLine("hello?");
+            Logging.Write("hello?");
         }
 
         public override void Initialize()

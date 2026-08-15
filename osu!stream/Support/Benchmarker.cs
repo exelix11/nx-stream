@@ -6,9 +6,12 @@ namespace osum.Support
     internal class Benchmarker : IDisposable
     {
         private readonly Stopwatch sw = new Stopwatch();
+        private readonly string OperationName;
 
-        public Benchmarker()
+        public Benchmarker(string operation = null)
         {
+            OperationName = operation;
+            Logging.Write($"Started {operation}");
             sw.Start();
         }
 
@@ -16,7 +19,10 @@ namespace osum.Support
 
         public void Dispose()
         {
-            Console.WriteLine("operation took " + sw.ElapsedTicks + "ms");
+            if (OperationName != null)
+                Logging.Write(OperationName + " took " + sw.ElapsedMilliseconds + "ms");
+            else
+                Logging.Write("operation took " + sw.ElapsedMilliseconds + "ms");
         }
 
         #endregion

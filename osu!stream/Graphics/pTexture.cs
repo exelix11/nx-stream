@@ -36,12 +36,11 @@ using OpenTK.Graphics.OpenGL;
 using System.Drawing.Imaging;
 using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 #endif
+
 using System;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using osum.AssetManager;
-
 
 namespace osum.Graphics
 {
@@ -113,15 +112,15 @@ namespace osum.Graphics
         {
             if (TextureGl != null)
             {
-//                if (fboDepthBuffer >= 0)
-//                {
-//#if iOS
-//                    GL.Oes.DeleteRenderbuffers(1, ref fboDepthBuffer);
-//#else
-//                    GL.DeleteRenderbuffers(1, ref fboDepthBuffer);
-//#endif
-//                    fboDepthBuffer = -1;
-//                }
+                //                if (fboDepthBuffer >= 0)
+                //                {
+                //#if iOS
+                //                    GL.Oes.DeleteRenderbuffers(1, ref fboDepthBuffer);
+                //#else
+                //                    GL.DeleteRenderbuffers(1, ref fboDepthBuffer);
+                //#endif
+                //                    fboDepthBuffer = -1;
+                //                }
 
                 if (fboId >= 0)
                 {
@@ -299,9 +298,9 @@ namespace osum.Graphics
 
                 return tex;
             }
-            catch
+            catch (Exception ex)
             {
-                // ignored
+                Logging.Write("Error loading texture " + filename + ": " + ex);
             }
 
             return null;
@@ -355,8 +354,12 @@ namespace osum.Graphics
                     pt.assetName = assetname;
                     b.UnlockPixels();
                 }
+#elif LIBNX
+                byte[] buffer = new byte[stream.Length];
+                stream.ReadExactly(buffer);
+                pt = FromBytes(buffer, assetname);
 #else
-                using (Bitmap b = (Bitmap)Image.FromStream(stream, false, false))
+                using (Bitmap b = Bitmap.FromStream(stream, false, false))
                 {
                     BitmapData data = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), ImageLockMode.ReadOnly,
                         System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -375,16 +378,25 @@ namespace osum.Graphics
 #endif
                 return pt;
             }
-            catch
+            catch (Exception ex)
             {
+                Logging.Write($"Error loading texture {assetname} from stream: " + ex);
                 return null;
             }
         }
 
-        public static pTexture FromBytes(byte[] data)
+        public static pTexture FromBytes(byte[] data, string assetname = "")
         {
+#if LIBNX
+            using var image = new StbiImage(data);
+            //Logging.Write($"Loading texture {assetname} from stream: {image.Width}x{image.Height} with {image.Channels} channels");
+            var pt = FromRawBytes(image.Data, image.Width, image.Height, image.Channels == 3 ? PixelFormat.Rgb : PixelFormat.Rgba);
+            pt.assetName = assetname;
+            return pt;
+#else
             using (MemoryStream ms = new MemoryStream(data))
-                return FromStream(ms, "");
+                return FromStream(ms, assetname);
+#endif
         }
 
         public static pTexture FromBytesSaveRawToFile(byte[] data, string filename)
@@ -393,7 +405,7 @@ namespace osum.Graphics
                 return FromStream(ms, filename, true);
         }
 
-        public static pTexture FromRawBytes(IntPtr location, int width, int height)
+        public static pTexture FromRawBytes(IntPtr location, int width, int height, PixelFormat format)
         {
             pTexture pt = new pTexture();
 
@@ -403,7 +415,7 @@ namespace osum.Graphics
             try
             {
                 pt.TextureGl = new TextureGl(pt.Width, pt.Height);
-                pt.TextureGl.SetData(location, 0, 0);
+                pt.TextureGl.SetData(location, 0, format);
             }
             catch
             {
@@ -413,7 +425,7 @@ namespace osum.Graphics
             return pt;
         }
 
-        public static pTexture FromRawBytes(byte[] bitmap, int width, int height)
+        public static pTexture FromRawBytes(byte[] bitmap, int width, int height, PixelFormat format)
         {
             pTexture pt = new pTexture();
             pt.Width = width;
@@ -422,7 +434,7 @@ namespace osum.Graphics
             try
             {
                 pt.TextureGl = new TextureGl(pt.Width, pt.Height);
-                pt.SetData(bitmap);
+                pt.SetData(bitmap, 0, format);
             }
             catch
             {

@@ -234,14 +234,7 @@ namespace osum.Helpers
                         break;
 
                     default:
-                        Write((byte)ObjType.otherType);
-                        BinaryFormatter b = new BinaryFormatter
-                        {
-                            AssemblyFormat = FormatterAssemblyStyle.Simple,
-                            TypeFormat = FormatterTypeStyle.TypesWhenNeeded
-                        };
-                        b.Serialize(BaseStream, obj);
-                        break;
+                        throw new NotImplementedException();
                 } // switch
             } // if obj==null
         } // WriteObject

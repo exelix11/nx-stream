@@ -1,3 +1,6 @@
+using System;
+using System.Diagnostics;
+using System.IO;
 using osum.Audio;
 using osum.Graphics;
 
@@ -16,7 +19,11 @@ using osum.Input;
 using osum.Input.Sources;
 #endif
 
-#if !iOS && !ANDROID
+#if LIBNX
+using osum.Support.Libnx;
+#endif
+
+#if !iOS && !ANDROID && !LIBNX
 using osum.Support.Desktop;
 #endif
 
@@ -41,6 +48,10 @@ namespace osum
 #elif ANDROID
             GameBase.Instance = new GameBaseAndroid(activity);
             GameBase.Instance.Run();
+#elif LIBNX
+            AppContext.SetSwitch("System.Resources.UseSystemResourceKeys", true);
+            GameBase game = new GameBaseLibnx();
+            game.Run();
 #else
             GameBase game = new GameBaseDesktop();
             game.Run();

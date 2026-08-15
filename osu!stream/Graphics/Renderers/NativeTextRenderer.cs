@@ -22,7 +22,7 @@ namespace osum.Graphics.Renderers
             for (int i = 0; i < bytes.Length; i++)
                 bytes[i] = 200;
 
-            pTexture tex = pTexture.FromRawBytes(bytes, text.Length * 32, 26);
+            pTexture tex = pTexture.FromRawBytes(bytes, text.Length * 32, 26, PixelFormat.Bgra);
             measured = new Vector2(tex.Width, tex.Height);
             return tex;
         }

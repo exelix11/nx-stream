@@ -1,10 +1,10 @@
 #if iOS || ANDROID
 using OpenTK.Graphics.ES11;
+#elif GLES2
+using OpenTK.Graphics.ES20;
 #else
 using OpenTK.Graphics.OpenGL;
-
 #endif
-
 
 namespace osum
 {
