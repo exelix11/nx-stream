@@ -1,3 +1,41 @@
+# osu-stream-nx
+
+This is a switch homebrew port of osu!stream on top of the [mono runtime port](https://github.com/exelix11/mono-nx). To run this on your console you will need one that is able of running homebrew. To add additional maps to the ones provided in the original repo you will need to extract them from the android or ios version of the game.
+
+Currently this repository does not ship binary releases as per licensing requirements, you will need to build the game and collect the needed assets yourself.
+
+## Port features and limitations
+
+- Base gameplay fully functional
+- No online features available (store/rankings/news), this is a limitation of mono-nx since the relevant apis are not implemented
+- No localisation support, this is a limitation of mono-nx since the relevant apis are not implemented
+- No maps are provided, you will need to extract them from the original game
+- Only touch input is supported, can only be played in portable mode
+- Due to a number of changes in project structure and dependencies this branch will not build for any other platform, this is not meant to be merged to the original main branch.
+
+## Build instructions
+
+1) Setup the devkita64 toolchain and the [mono-nx sdk](https://github.com/exelix11/mono-nx#building)
+2) In your local clone of the mono-nx repo run `source env.sh`
+3) Build the interpreter fork in this repo
+  - Dependency first: `cd mono-nx/fdk-aac && ./build.sh`
+  - Then build the interpreter: `cd mono-nx/interpreter && make -j$(nproc)`
+4) Build the managed osu stream fork: `cd osu!stream && dotnet build`
+
+This is good enough for local development and testing, with this setup you can quickly  iterate code changes in the game by building only the managed code and running it in the interpreter. Note that this needs a full copy of the mono-nx framework dlls on your SD card. For releases you'll want to build the standalone AOT version:
+
+1) Same prerequisites as above, make sure the interpreter built fine, then `cd mono-nx/aot`
+3) Build the c# side and aot it `./build_aot.sh`, this produces the game as a set of native static libraries 
+4) Build the actual nro with `make -j$(nproc)` 
+5) Collect the release package with `./collect_sd_release.sh` and copy it to the SD card.
+6) Consider tweaking mono_config.ini for debugging to enable/disable logging.
+
+In case of issues reference the github actions build steps.
+
+---
+
+Original readme below
+
 <p align="center">
   <img src="Artwork/osu logo white.jpg">
 </p>
