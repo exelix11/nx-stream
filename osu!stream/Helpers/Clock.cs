@@ -25,8 +25,8 @@ namespace osum.Helpers
         public const int UNIVERSAL_OFFSET_M4A = -8;
         public const int UNIVERSAL_OFFSET_INPUT = 16;//16 * 2; //roughly four frames
 #elif LIBNX
-        public const int UNIVERSAL_OFFSET_MP3 = -45; // Empirically measured with screen capture. Note that mp3 is not used for maps in practice due to other defines around the codebase.
-        public const int UNIVERSAL_OFFSET_M4A = -45; 
+        public const int UNIVERSAL_OFFSET_MP3 = -14; // Empirically measured with screen capture. Note that mp3 is not used for maps in practice due to other defines around the codebase.
+        public const int UNIVERSAL_OFFSET_M4A = -14; 
         public const int UNIVERSAL_OFFSET_INPUT = 16; // Assume one frame due to double buffering but i have no way of accurately measuring this.
 #else
         public const int UNIVERSAL_OFFSET_MP3 = 50;
