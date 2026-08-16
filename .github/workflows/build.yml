@@ -6,11 +6,11 @@ on:
       sdk_bin:
         description: "Mono-nx SDK binary url"
         required: true
-        default: https://github.com/exelix11/mono-nx/releases/download/rel-2/mono-nx-sdk-linux-x64.zip
+        default: https://github.com/exelix11/mono-nx/releases/download/rel-3/mono-nx-sdk-linux-x64.zip
       mononx_commit:
         description: "Reference commit for mono-nx"
         required: true
-        default: "66d5fd0"
+        default: "fec0577"
       devkit_container: 
         description: "Docker image with switch tools"
         required: true
