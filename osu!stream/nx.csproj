@@ -13,6 +13,10 @@
     <!-- <DefineConstants>$(DefineConstants)DEBUG</DefineConstants> -->
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DefineConstants Condition=" '$(Dist)' != '' ">$(DefineConstants);DIST</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\OpenTK\nxOpenTK.csproj" />
     <PackageReference Include="acryptohashnet" Version="3.1.0" />

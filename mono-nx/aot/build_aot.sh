@@ -20,7 +20,7 @@ fi
 rm romfs/osu-stream/build/*.dll || true
 
 echo Building the project...
-dotnet build ../../osu\!stream/nx.csproj 
+dotnet build ../../osu\!stream/nx.csproj -p:Dist=true
 
 echo Trimming the assemblies...
 
