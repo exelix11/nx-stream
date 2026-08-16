@@ -44,8 +44,7 @@ export PATH=$PATH:$DEVKITPRO/devkitA64/bin/
 echo "build log" > mono_aot.log
 
 for file in output/*.dll; do
-    # TODO: try the direct-pinvoke option here to reduce the need for the dlshim
-    $MONO_COMPILER --path=output/ --aot=full,static,tool-prefix=aarch64-none-elf-,ntrampolines=20000,ngsharedvt-trampolines=4096,nimt-trampolines=4096 $file >> mono_aot.log
+    $MONO_COMPILER --path=output/ --aot=full,static,direct-icalls,direct-pinvoke,nodebug,tool-prefix=aarch64-none-elf-,ntrampolines=20000,ngsharedvt-trampolines=4096,nimt-trampolines=4096 $file >> mono_aot.log
 done
 
 # Dlls are needed for metadata

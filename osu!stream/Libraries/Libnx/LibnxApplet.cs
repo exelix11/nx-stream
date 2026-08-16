@@ -16,6 +16,8 @@ public static class Applet
 		IntPtr param;
 	};
 
+	public delegate void AppletHookFn(AppletHookType hook, IntPtr param);
+
 	[DllImport("libnx")]
 	static extern void appletHook(IntPtr cookie, AppletHookFn callback, IntPtr param);
 
@@ -39,8 +41,6 @@ public static class Applet
 		OnAlbumScreenShotTaken,
 		RequestToDisplay,
 	};
-
-	public delegate void AppletHookFn(AppletHookType hook, IntPtr param);
 
 	public enum AppletFocusHandlingMode : int
 	{
@@ -70,6 +70,29 @@ public static class Applet
 			Logging.Write($"Failed to set focus handling mode to {suspend}: {res}");
 	}
 
+	[MonoPInvokeCallback(typeof(AppletHookFn))]
+	static void OnAppletHook(AppletHookType hook, IntPtr param)
+	{
+		Logging.Write($"Applet hook called: {hook} with param {param}");
+		try
+		{
+			if (hook == AppletHookType.OnOperationMode)
+			{
+				var guard = (HookDisposeGuard)GCHandle.FromIntPtr(param).Target!;
+				guard.OperationModeChange?.Invoke(appletGetOperationMode());
+			}
+			else if (hook == AppletHookType.OnFocusState)
+			{
+				var guard = (HookDisposeGuard)GCHandle.FromIntPtr(param).Target!;
+				guard.FocusChange?.Invoke(appletGetFocusState());
+			}
+		}
+		catch (Exception ex)
+		{
+			Logging.Write(ex);
+		}
+	}
+
 	public static IDisposable HookAppletEvents(
 		Action<AppletFocusState> focusChange = null,
 		Action<AppletOperationMode> operationModeChange = null)
@@ -80,27 +103,8 @@ public static class Applet
 			OperationModeChange = operationModeChange
 		};
 
-		appletHook(res.Cookie, static (hook, param) =>
-		{
-			Logging.Write($"Applet hook called: {hook} with param {param}");
-			try
-			{
-				if (hook == AppletHookType.OnOperationMode)
-				{
-					var guard = (HookDisposeGuard)GCHandle.FromIntPtr(param).Target!;
-					guard.OperationModeChange?.Invoke(appletGetOperationMode());
-				}
-				else if (hook == AppletHookType.OnFocusState)
-				{
-					var guard = (HookDisposeGuard)GCHandle.FromIntPtr(param).Target!;
-					guard.FocusChange?.Invoke(appletGetFocusState());
-				}
-			}
-			catch (Exception ex)
-			{
-				Logging.Write(ex);
-			}
-		}, GCHandle.ToIntPtr(res.Handle));
+		// Don't use a lambda here or the AOT build will fail to compile the delegate.
+		appletHook(res.Cookie, OnAppletHook, GCHandle.ToIntPtr(res.Handle));
 
 		Logging.Write($"Hooked focus state change with cookie {res.Cookie}");
 		return res;

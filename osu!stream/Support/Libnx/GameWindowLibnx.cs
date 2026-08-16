@@ -36,7 +36,7 @@ namespace osum.Support.Libnx
             (Director.CurrentMode as Player)?.Pause();
             
             var isDocked = mode == Applet.AppletOperationMode.Console;
-            var message = "This game can only be played in portable mode. Please undock your Switch to continue playing.";
+            var message = "This game can only be played with a touch screen. Please undock your Switch to continue playing.";
             
             if (isDocked && GameBase.NotificationQueue.Count == 0)
                 GameBase.Notify(message);
@@ -47,9 +47,9 @@ namespace osum.Support.Libnx
             base.OnLoad(e);
 
             // Trick to get suspend notifications: ask the os to not suspend us,
-            // When the notification that the app is in the background arrvies pause the game then ask to suspend again.
+            // When the notification that the app is in the background arrives pause the game then ask to suspend again.
             // When we get focus back ask again not to suspend for the next time.
-            // If we don't do this we only get on focus notifications which are too late to pause the game
+            // If we don't do this we only get OnFocus notifications when the game resumes which are too late to pause the game due to the clocks advancing
             Applet.SetSuspendOnFocusLoss(false);
 
             focusGuard = Applet.HookAppletEvents(
