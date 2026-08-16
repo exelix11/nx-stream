@@ -220,6 +220,9 @@ namespace osum
                 case OsuMode.Tutorial:
                     mode = new Tutorial();
                     break;
+                case OsuMode.OffsetTest:
+                    mode = new OffsetTest();
+                    break;
                 case OsuMode.Credits:
                     mode = new Credits();
                     break;

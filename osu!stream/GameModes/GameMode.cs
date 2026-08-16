@@ -18,7 +18,8 @@ namespace osum.GameModes
         PositioningTest,
         Empty,
         VideoPreview,
-        PlayTest
+        PlayTest,
+        OffsetTest
     }
 
     /// <summary>

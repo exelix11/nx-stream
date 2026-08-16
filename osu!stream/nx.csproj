@@ -36,6 +36,8 @@
     <Compile Include="Audio/BackgroundAudioPlayerLibnx.cs" />
 
     <Compile Include="Helpers/Logging.cs" />
+
+    <Compile Include="GameModes/Play/OffsetTest.cs" />
         
     <!-- Unused stubs used during porting -->    
     <!-- <Compile Include="Audio\SoundEffectPlayerStub.cs" /> -->

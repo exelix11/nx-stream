@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using OpenTK;
 using OpenTK.Graphics;
 using osum.GameModes.Store;
@@ -43,6 +44,14 @@ namespace osum.GameModes.MainMenu
         private void newsButton_OnClick(object sender, EventArgs e)
         {
             HasNews = false;
+
+#if LIBNX
+            if (File.Exists("sdmc:/osu-stream/test.mp3"))
+            {
+                Director.ChangeMode(OsuMode.OffsetTest);
+                return;
+            }
+#endif
 
             GameBase.Instance.ShowWebView(@"https://news.osustream.com/", "News");
 
