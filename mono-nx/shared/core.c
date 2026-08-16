@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <pthread.h>
 
+#include <mono/metadata/mono-debug.h>
+
 static PadState pad;
 static bool using_console = false;
 static bool is_applet = false;
@@ -212,6 +214,8 @@ static int handle_ini_line(void *user, const char *section, const char *name, co
         pconfig->config_dir = inf_dup_unquote(value);
     else if (MATCH("mono", "default_assembly"))
         pconfig->default_assembly = inf_dup_unquote(value);
+    else if (MATCH("mono", "enable_debug_server"))
+        pconfig->enable_debug_server = inf_dup_unquote(value);
     else if (MATCH("nx", "svc_io_redirect"))
         pconfig->svc_io_redirect = (strcmp(value, "true") == 0);
     else if (MATCH("nx", "udp_io_redirect"))
@@ -312,7 +316,21 @@ bool application_initialize(const char* configFile)
         return false;
     }
 
-    mono_set_dirs(g_config.assembly_dir, g_config.config_dir);   
+    mono_set_dirs(g_config.assembly_dir, g_config.config_dir);
+
+    if (g_config.enable_debug_server)
+    {
+        char* options[] = {
+            "--debugger-agent=transport=dt_socket,server=y,address=0.0.0.0:55555"
+        };
+
+        socket_esnure_init_thread_safe();
+
+        io_debugf("Debug server enabled on 0.0.0.0:55555 connect to resmue execution.");
+        
+        mono_jit_parse_options (1, options);
+		mono_debug_init (MONO_DEBUG_FORMAT_MONO);
+    }
 
     return true;
 }
@@ -374,6 +392,13 @@ void application_force_exit()
     __nx_applet_exit_mode = 1;
     // Terminate cleanly-enough
     exit(0);
+}
+
+// Required by our mono build and called by System.Environment.Exit() in C#
+void mono_nx_exit(int code)
+{
+    io_debugf("mono_nx_exit(%d)", code);
+    application_force_exit();
 }
 
 void application_chdir_to_assembly(const char* path)
