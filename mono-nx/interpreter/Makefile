@@ -49,7 +49,7 @@ MONO_NX_USE_OPENGL	 		:=  	1
 MONO_NX_USE_OPENAL	 		:=  	1
 MONO_NX_USE_OSU_EXTENSIONS	:=  	1
 
-TARGET		:=	osu-stream-nx-interpreter
+TARGET		:=	nx-stream-interpreter
 BUILD		:=	build
 SOURCES		:=	source \
 				../shared \

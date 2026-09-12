@@ -37,7 +37,7 @@ namespace osum.UI
                 DimImmune = true
             };
 
-            pText descText = new pText(description, 24, new Vector2(0, -90), new Vector2(900 * GameBase.SpriteToBaseRatio, 0), 1, true, Color4.White, false)
+            pText descText = new pText(description, 24, new Vector2(0, -90), new Vector2(1000 * GameBase.SpriteToBaseRatio, 0), 1, true, Color4.White, false)
             {
                 Field = FieldTypes.StandardSnapCentre,
                 Origin = OriginTypes.TopCentre,

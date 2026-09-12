@@ -12,7 +12,7 @@ namespace osum.Support.Libnx
     {
         public GameWindowLibnx Window;
 
-        override public string PathConfig => "sdmc:/osu-stream/";
+        override public string PathConfig => "sdmc:/nx-stream/";
 
         public GameBaseLibnx(OsuMode mode = OsuMode.Unknown) : base(mode)
         {
@@ -40,7 +40,7 @@ namespace osum.Support.Libnx
 
         protected override NativeAssetManager InitializeAssetManager()
         {
-            return new NativeAssetManager("sdmc:/osu-stream/");
+            return new NativeAssetManager("sdmc:/nx-stream/");
         }
 
 		public override void OpenUrl(string url)

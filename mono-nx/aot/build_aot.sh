@@ -17,7 +17,7 @@ if [ -d output ]; then
     rm -rf output/
 fi
 
-rm romfs/osu-stream/build/*.dll || true
+rm romfs/nx-stream/build/*.dll || true
 
 echo Building the project...
 dotnet build ../../osu\!stream/nx.csproj -p:Dist=true
@@ -49,6 +49,6 @@ done
 
 # Dlls are needed for metadata
 echo copying outputs
-cp output/*.dll romfs/osu-stream/build/
+cp output/*.dll romfs/nx-stream/build/
 
 grep -r "Linking symbol:" mono_aot.log | sed "s/Linking symbol: '\([^']*\)'\./STATIC_MONO_SYM(\1);/" > source/mono_symbols.h

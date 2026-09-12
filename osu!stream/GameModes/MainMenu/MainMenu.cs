@@ -161,7 +161,7 @@ namespace osum.GameModes.MainMenu
                 headphones.Additive = true;
                 headphones.Transform(new TransformationF(TransformationType.Fade, 0, 1, 50, 200));
                 headphones.Transform(new TransformationF(TransformationType.Fade, 1, 1, 1000, initial_display));
-                spriteManager.Add(headphones);
+                spriteManager.Add(headphones);;
 
 #if !DIST
                 if (GameBase.Config.GetValue(@"MapperMode", true))
@@ -225,7 +225,14 @@ namespace osum.GameModes.MainMenu
                             GameBase.Config.SaveConfig();
                         });
 
-                    GameBase.Scheduler.Add(delegate { GameBase.Notify(notification); }, initial_display + 1500);
+                    GameBase.Scheduler.Add(delegate { 
+                        GameBase.Notify(new Notification("License", 
+                            "Nx!stream is an unofficial port of Osu!stream\n\n"+ 
+                            "Osu! and Osu!stream are owned by ppy and the Osu! team.\n" +
+                            "This port is not affiliated with the original authors in any way.\n", 
+                            NotificationStyle.Okay));
+                        GameBase.Notify(notification); 
+                    }, initial_display + 1500);
                 }
             }
             else

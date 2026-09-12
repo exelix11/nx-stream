@@ -46,7 +46,7 @@ namespace osum.GameModes.MainMenu
             HasNews = false;
 
 #if LIBNX
-            if (File.Exists("sdmc:/osu-stream/test.mp3"))
+            if (File.Exists("sdmc:/nx-stream/test.mp3"))
             {
                 Director.ChangeMode(OsuMode.OffsetTest);
                 return;

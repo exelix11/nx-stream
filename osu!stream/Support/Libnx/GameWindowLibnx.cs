@@ -32,6 +32,8 @@ namespace osum.Support.Libnx
 
         void AppletOperationModeChange(Applet.AppletOperationMode mode)
         {
+            return;
+
             Logging.Write($"Operation mode change detected: {mode}");
             (Director.CurrentMode as Player)?.Pause();
             

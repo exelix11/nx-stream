@@ -1,8 +1,10 @@
-# osu-stream-nx
+# Nx!Stream
 
-This is a switch homebrew port of osu!stream on top of the [mono runtime port](https://github.com/exelix11/mono-nx). To run this on your console you will need one that is able of running homebrew. To add additional maps to the ones provided in the original repo you will need to extract them from the android or ios version of the game.
+Nx!Stream is a homebrew port of [osu!stream](https://github.com/ppy/osu-stream) for the nintendo switch. Osu! and osu!stream are owned by ppy and the osu! team. This port is an independent effort and is not affiliated with the original authors in any way. This port is provided under the same MIT license as the original project.
 
-Currently this repository does not ship binary releases as per licensing requirements, you will need to build the game and collect the needed assets yourself.
+To run this on your console you will need one that is able of running homebrew. To add additional maps to the ones provided in the original repo you will need to extract them from the android or ios version of the game. 
+
+This project uses the [mono-nx runtime](https://github.com/exelix11/mono-nx).
 
 ## Port features and limitations
 

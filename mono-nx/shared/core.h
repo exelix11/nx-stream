@@ -23,7 +23,7 @@
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-dl-fallback.h>
 
-#define CONFIG_INI_PATH "sdmc:/osu-stream/mono_config.ini"
+#define CONFIG_INI_PATH "sdmc:/nx-stream/mono_config.ini"
 
 struct AppConfiguration
 {

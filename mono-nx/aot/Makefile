@@ -45,12 +45,11 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   of a homebrew executable (.nro). This is intended to be used for sysmodules.
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
-APP_TITLE	:=	osu!stream
-APP_AUTHOR	:=	ppy & osu-stream contributors
+APP_TITLE	:=	nx!stream
 APP_VERSION	:=	1.0
 ICON		:=	icon.jpg
 
-TARGET		:=	osu-stream-nx
+TARGET		:=	nx-stream
 BUILD		:=	build
 SOURCES		:=	source \
 				../shared \
