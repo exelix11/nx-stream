@@ -6,6 +6,8 @@ To run this on your console you will need one that is able of running homebrew. 
 
 This project uses the [mono-nx runtime](https://github.com/exelix11/mono-nx).
 
+https://github.com/user-attachments/assets/942f46d6-3284-4efa-9b8f-0bd91c92a2be
+
 ## Port features and limitations
 
 - Base gameplay fully functional
@@ -14,8 +16,6 @@ This project uses the [mono-nx runtime](https://github.com/exelix11/mono-nx).
 - No maps are provided, you will need to extract them from the original game
 - Only touch input is supported, can only be played in portable mode
 - Due to a number of changes in project structure and dependencies this branch will not build for any other platform, this is not meant to be merged to the original main branch.
-
-https://github.com/user-attachments/assets/48c32b21-51e0-458a-a4ce-1e18bff9b953
 
 ## Build instructions
 
