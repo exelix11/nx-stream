@@ -13,6 +13,8 @@ Currently this repository does not ship binary releases as per licensing require
 - Only touch input is supported, can only be played in portable mode
 - Due to a number of changes in project structure and dependencies this branch will not build for any other platform, this is not meant to be merged to the original main branch.
 
+https://github.com/user-attachments/assets/48c32b21-51e0-458a-a4ce-1e18bff9b953
+
 ## Build instructions
 
 1) Setup the devkita64 toolchain and the [mono-nx sdk](https://github.com/exelix11/mono-nx#building)
