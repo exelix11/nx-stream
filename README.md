@@ -17,6 +17,8 @@ https://github.com/user-attachments/assets/48c32b21-51e0-458a-a4ce-1e18bff9b953
 
 ## Build instructions
 
+Follow the reference in the [github actions workflow](https://github.com/exelix11/osu-stream-nx/blob/master/.github/workflows/build.yml) (or have github build it for you).
+
 1) Setup the devkita64 toolchain and the [mono-nx sdk](https://github.com/exelix11/mono-nx#building)
 2) In your local clone of the mono-nx repo run `source env.sh`
 3) Build the interpreter fork in this repo
@@ -31,8 +33,6 @@ This is good enough for local development and testing, with this setup you can q
 4) Build the actual nro with `make -j$(nproc)` 
 5) Collect the release package with `./collect_sd_release.sh` and copy it to the SD card.
 6) Consider tweaking mono_config.ini for debugging to enable/disable logging.
-
-In case of issues reference the github actions build steps.
 
 ---
 
